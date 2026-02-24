@@ -62,7 +62,7 @@ export function AuthFilesPage() {
   const previousSelectionCountRef = useRef(0);
   const selectionCountRef = useRef(0);
 
-  const { keyStats, usageDetails, loadKeyStats } = useAuthFilesStats();
+  const { keyStats, usageDetails, loadKeyStats, refreshKeyStats } = useAuthFilesStats();
   const {
     files,
     selectedFiles,
@@ -86,7 +86,7 @@ export function AuthFilesPage() {
     deselectAll,
     batchSetStatus,
     batchDelete
-  } = useAuthFilesData({ refreshKeyStats: loadKeyStats });
+  } = useAuthFilesData({ refreshKeyStats });
 
   const statusBarCache = useAuthFilesStatusBarCache(files, usageDetails);
 
@@ -129,7 +129,7 @@ export function AuthFilesPage() {
   } = useAuthFilesPrefixProxyEditor({
     disableControls: connectionStatus !== 'connected',
     loadFiles,
-    loadKeyStats
+    loadKeyStats: refreshKeyStats
   });
 
   const disableControls = connectionStatus !== 'connected';
@@ -203,20 +203,25 @@ export function AuthFilesPage() {
   };
 
   const handleHeaderRefresh = useCallback(async () => {
-    await Promise.all([loadFiles(), loadKeyStats(), loadExcluded(), loadModelAlias()]);
-  }, [loadFiles, loadKeyStats, loadExcluded, loadModelAlias]);
+    await Promise.all([loadFiles(), refreshKeyStats(), loadExcluded(), loadModelAlias()]);
+  }, [loadFiles, refreshKeyStats, loadExcluded, loadModelAlias]);
 
   useHeaderRefresh(handleHeaderRefresh);
 
   useEffect(() => {
     if (!isCurrentLayer) return;
     loadFiles();
-    loadKeyStats();
+    void loadKeyStats().catch(() => {});
     loadExcluded();
     loadModelAlias();
   }, [isCurrentLayer, loadFiles, loadKeyStats, loadExcluded, loadModelAlias]);
 
-  useInterval(loadKeyStats, isCurrentLayer ? 240_000 : null);
+  useInterval(
+    () => {
+      void refreshKeyStats().catch(() => {});
+    },
+    isCurrentLayer ? 240_000 : null
+  );
 
   const existingTypes = useMemo(() => {
     const types = new Set<string>(['all']);
