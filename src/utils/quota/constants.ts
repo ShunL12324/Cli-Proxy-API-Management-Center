@@ -34,6 +34,10 @@ export const TYPE_COLORS: Record<string, TypeColorSet> = {
     light: { bg: '#fff3e0', text: '#ef6c00' },
     dark: { bg: '#e65100', text: '#ffb74d' },
   },
+  kimi: {
+    light: { bg: '#fff4e5', text: '#ad6800' },
+    dark: { bg: '#7c4a03', text: '#ffd591' },
+  },
   antigravity: {
     light: { bg: '#e0f7fa', text: '#006064' },
     dark: { bg: '#004d40', text: '#80deea' },
@@ -192,4 +196,11 @@ export const KIRO_REQUEST_HEADERS = {
   'Content-Type': 'application/x-amz-json-1.0',
   'x-amz-user-agent': 'aws-sdk-js/1.0.0 KiroIDE-0.6.18',
   'User-Agent': 'aws-sdk-js/1.0.0 ua/2.1 os/windows lang/js md/nodejs#20.16.0 api/codewhispererruntime#1.0.0 m/E KiroIDE-0.6.18',
+};
+
+// Kimi API configuration
+export const KIMI_USAGE_URL = 'https://api.kimi.com/coding/v1/usages';
+
+export const KIMI_REQUEST_HEADERS = {
+  Authorization: 'Bearer $TOKEN$',
 };
